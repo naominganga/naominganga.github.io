@@ -677,7 +677,7 @@ Row{.tabset}
 
 ### **Cumulative cases**
 
-```{r,fig.width=11,rows.print=5,results='asis'}
+```{r,fig.width=10,rows.print=5,results='asis'}
 
 df_africa <- complete_data %>%
   # dplyr::filter(date == max(date)) %>%
@@ -705,7 +705,7 @@ plotly::ggplotly(plot1)
 
 ### **Death rate**(Proportion of people who have died)
 
-```{r,fig.width=11,rows.print=5,results='asis'}
+```{r,fig.width=10,rows.print=5,results='asis'}
 
 df_africa <- complete_data %>%
   # dplyr::filter(date == max(date)) %>%
@@ -734,7 +734,7 @@ plotly::ggplotly(plot1)
 
 ### **Recovery rate** (Proportion of people who have recovered)
 
-```{r,fig.width=12,rows.print=5,results='asis'}
+```{r,fig.width=10,rows.print=5,results='asis'}
 
 df_africa <- complete_data %>%
   # dplyr::filter(date == max(date)) %>%
@@ -942,10 +942,14 @@ plotly::ggplotly(plot0)
 ```
 
 
-Map
+Map {data-icon="fa-globe-africa"}
 =======================================================================
 
+Row{.tabset}
+-----------------------------------------------------------------------
 
+
+### **World map of cases** (use + and - icons to zoom in/out) and click the finger pointer to get the county's statistics
 
 ```{r}
 # map tab added by Art Steinmetz
@@ -956,19 +960,7 @@ library(purrr)
 #Load the world map
 ```
 
-### **World map of cases (*use + and - icons to zoom in/out*) and click the finger pointer to get the country's the statistics**
-
-
 ```{r,comment=NA,warning=F,error=T,message=F}
-# world.shp<- rgdal::readOGR(dsn="C:/Users/Admin/Documents/Icha/Covid19/raw_data/world_map",layer = "Countries0302")
-# 
-# tomap<- global_data %>% 
-#   select(Country_Region,Long_,Lat,Deaths,Recovered,Confirmed) %>% 
-#   rename(CNTRY_NAME=Country_Region) %>% 
-#   mutate(region=ifelse(CNTRY_NAME %in% africa,"Africa",NA))
-# 
-# world.shp=sp::merge(world.shp,tomap,by="CNTRY_NAME",duplicateGeoms = T)
-
 
 pal <- colorFactor(c("grey", "red"),
                    domain = unique(global_data$Confirmed))
@@ -1000,48 +992,73 @@ addCircleMarkers(
 ```
 
 
-```{r}
-# 
-# africa_data <-global_data%>% 
-#   mutate(log_cases=log(Confirmed))%>% 
-#   mutate(region=ifelse(Country_Region %in% africa,"Africa",NA)) %>% 
-#   filter(region=="Africa")
-# 
-# pal <- colorFactor(c("grey", "red"),
-#                    domain = unique(africa_data$Confirmed))
-# 
-# 
-# (map <- leaflet() %>%
-#    #setView(1, -1, zoom =9) %>% 
-#   addTiles(group = "OSM") %>%
-#     addProviderTiles(providers$Esri.NatGeoWorldMap) %>% 
-# addCircleMarkers(
-#         data = africa_data,
-#         lng = ~Long_, lat = ~Lat,
-#         #                 label=~as.character(cases),
-#         color = ~ pal(Confirmed),
-#         stroke = FALSE,
-#         fillOpacity = 2,
-#         radius = ~log_cases,
-#         #label=lapply(labs,htmltools::HTML),
-#         popup = leafpop::popupTable(global_data,
-#           zcol = c("Country_Region", "Deaths","Recovered","Confirmed"),
-#                     feature.id = FALSE,
-#           row.numbers = FALSE),
-#         labelOptions = labelOptions(style = list("font-weight" = "normal", padding = "3px 8px"),
-#                                           textsize = "15px", direction = "auto")))
-# 
+### **Kenya map of cases** 
+
+```{r,comment=NA,warning=F,error=T,message=F,cache=FALSE}
+
+cases<- read.csv("C:/Users/Admin/Documents/naominganga.github.io/map/covid_cases.csv",stringsAsFactors = F) %>% 
+  rename("NAME_1"="county")
+
+county.shp<- rgdal::readOGR("C:/Users/Admin/Documents/naominganga.github.io/map","KRCS_covid_survey_2020",verbose = FALSE)
+
+county.shp<-sp::merge(county.shp,cases, by="NAME_1",duplicateGeoms = T) 
+
+county.shp@data <- county.shp@data %>%
+  mutate(response=if_else(is.na(cases),"No Response","Response"))
+
+#### interactive map
+
+bin <- c(1,5,10,20,50,100,200)
+
+pal <- colorBin("Reds", domain = county.shp$cases, bins = bin,na.color="grey")
+
+(map <- leaflet() %>%
+   setView(40.25880, -0.5, zoom = 6.3) %>% 
+  addTiles(group = "OSM") %>%
+    addProviderTiles(providers$Stamen.Toner) %>% 
+  # Marker data are from the sites data frame. We need the ~ symbols
+  # to indicate the columns of the data frame.
+  # addAwesomeMarkers(~lon_dd, ~lat_dd, label = ~locality, group = "Sites", icon=icons) %>%
+    addPolygons(data=county.shp, 
+              group="NAME_1", 
+              stroke = FALSE,
+              fillColor = ~pal(cases),
+              fillOpacity = 0.9, 
+              weight = 0.2, 
+              smoothFactor = 0.2,
+               popup = leafpop::popupTable(county.shp@data,
+          zcol = c("NAME_1", "cases"), feature.id = FALSE,
+          row.numbers = FALSE),
+  highlightOptions = highlightOptions(color="black",stroke = 4, weight = 5,bringToFront = TRUE),
+                  labelOptions = labelOptions(direction = "auto")) %>%
+    addLegend(pal = pal,
+            values = county.shp$response, 
+            position = "bottomright", 
+            title = "Covid19 cases"))
 
 ```
+
 
 About
 =======================================================================
 
-**The Coronavirus Dashboard: the case of Kenya**
+**About Coronavirus disease (COVID-19)**
+
+Coronaviruses (CoV) are a large family of viruses that cause illness ranging from the common cold to more severe diseases such as Middle East Respiratory Syndrome (MERS-CoV) and Severe Acute Respiratory Syndrome (SARS-CoV). A novel coronavirus (nCoV) is a new strain that has not been previously identified in humans.
+
+Coronaviruses are zoonotic, meaning they are transmitted between animals and people. Detailed investigations found that SARS-CoV was transmitted from civet cats to humans and MERS-CoV from dromedary camels to humans. Several known coronaviruses are circulating in animals that have not yet infected humans.
+
+Common signs of infection include respiratory symptoms, fever, cough, shortness of breath and breathing difficulties. In more severe cases, infection can cause pneumonia, severe acute respiratory syndrome, kidney failure and even death.
+
+Standard recommendations to prevent infection spread include regular hand washing, covering mouth and nose when coughing and sneezing, thoroughly cooking meat and eggs. Avoid close contact with anyone showing symptoms of respiratory illness such as coughing and sneezing.
+
+**Data source**
 
 This Coronavirus dashboard-the case of Kenya provides an overview of the 2019 Novel Coronavirus COVID-19 pandemic for Kenya. This dashboard is built with R using the R Makrdown framework
 
 The raw data is pulled from the Johns Hopkins University Center for Systems Science and Engineering (JHU CCSE) Coronavirus [repository](https://raw.githubusercontent.com/CSSEGISandData/COVID-19)
 
 The data and dashboard are refreshed on a daily basis.
+
+
 
