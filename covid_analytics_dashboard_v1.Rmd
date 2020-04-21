@@ -563,8 +563,11 @@ plotly::ggplotly(ggplot(data=summ, aes(x=dateRep,y=cases,
 
 ```
 
-Control measures {data-navmenu="Covid -19 Incidences in Kenya" data-icon="fa-map-marker-alt"}
+Covid -19 Incidences in Kenya {data-icon="fa-map-marker-alt"}
 =======================================================================
+
+Row{.tabset}
+-----------------------------------------------------------------------
 
 
 ### **Daily cumulative cases with control measures** 
@@ -624,9 +627,6 @@ ggplot(kenya_plot,aes(x = day_since_first_report, y = cases))+
 
 ```
 
-Cumulative cases {data-navmenu="Covid -19 Incidences in Kenya" data-icon="fa-map-marker-alt"}
-=======================================================================
-
 ### **Daily cumulative cases**
 
 ```{r,fig.width=11,rows.print=5,results='asis'}
@@ -645,12 +645,13 @@ ggplot(data=x, aes(x=day_since_first_report,y=cumulative_cases,
         axis.line.y = element_blank())
 ```
 
-Daily incidences {data-navmenu="Covid -19 Incidences in Kenya" data-icon="fa-map-marker-alt"}
-=======================================================================
 
 ### **Daily Incidences**
     
 ```{r,fig.width=11,rows.print=5,results='asis'}
+
+#Daily incidences {data-navmenu="Covid -19 Incidences in Kenya" data-icon="fa-map-marker-alt"}
+#=======================================================================
 
 summ<- complete_data %>% 
   filter(country=="Kenya") %>% 
@@ -733,7 +734,7 @@ plotly::ggplotly(plot1)
 
 ### **Recovery rate** (Proportion of people who have recovered)
 
-```{r,fig.width=11,rows.print=5,results='asis'}
+```{r,fig.width=12,rows.print=5,results='asis'}
 
 df_africa <- complete_data %>%
   # dplyr::filter(date == max(date)) %>%
@@ -754,7 +755,7 @@ plot1<- ggplot(data=df_africa, aes(x=day_since_first_report,y=recovery_rate,
     labs(x=paste("Days since first case was reported"),y="", title = "Recovery Rate for COVID 19 \n(Eastern Africa)")+
      theme(legend.position = "right",
            legend.title = element_blank())+ scale_colour_discrete(na.translate = F)+my_theme+
- scale_x_continuous(breaks =seq(0,max(as.numeric(df_africa$day_since_first_report)+1,2)))
+ scale_x_continuous(breaks =seq(0,max(as.numeric(df_africa$day_since_first_report)+1,4)))
 
 plotly::ggplotly(plot1)
 
