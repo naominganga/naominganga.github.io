@@ -1,23 +1,23 @@
 county,cases
 Baringo,
 Bomet,
-Bungoma,
+Bungoma,2
 Busia,
 Elgeyo-Marakwet,
 Embu,
 Garissa,
-Homa Bay,2
+Homa Bay,1
 Isiolo,
-Kakamega,2
+Kakamega,1
 Kajiado,3
 Kericho,
-Kiambu,7
-Kilifi,10
+Kiambu,5
+Kilifi,8
 Kirinyaga,
 Kisii,1
 Kisumu,
-Kitui,2
-Kwale,1
+Kitui,4
+Kwale,2
 Laikipia,2
 Lamu,
 Machakos,7
@@ -25,24 +25,24 @@ Makueni,
 Mandera,8
 Marsabit,
 Meru,
-Migori,
-Mombasa,62
-Murang'a,2
-Nairobi,177
-Nakuru,5
+Migori,2
+Mombasa,158
+Murang'a,
+Nairobi,289
+Nakuru,2
 Nandi,
 Narok,
 Tharaka-Nithi,
-Nyamira,1
-Nyandarua,2
-Nyeri,1
+Nyamira,
+Nyandarua,
+Nyeri,
 Samburu,
 Siaya,2
 Taita Taveta,
 Tana River,
 Trans-Nzoia,
 Turkana,
-Uasin Gishu,2
-Vihiga,1
-Wajir,
+Uasin Gishu,1
+Vihiga,
+Wajir,2
 West Pokot,
