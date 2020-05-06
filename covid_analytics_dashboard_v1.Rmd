@@ -1024,7 +1024,7 @@ county.shp@data <- county.shp@data %>%
 
 #### interactive map
 
-bin <- c(1,5,10,20,50,100,200)
+bin <- c(1,5,10,20,50,100,300)
 
 pal <- colorBin("Reds", domain = county.shp$cases, bins = bin,na.color="grey")
 
