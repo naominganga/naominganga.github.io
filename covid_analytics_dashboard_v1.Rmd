@@ -165,7 +165,7 @@ to_export <- trend_data1 %>%
 #active=totalcases-deaths-recovered
 
 intervention_data<-full_data %>% 
-  dplyr::select(country,quarantine,schools,publicplace,gatheringlimit,gathering,nonessential,curfew,cessation,golf_clubs,face_masks,hospibed,smokers,sexratio,density,firstcase,totalcases,deaths) %>% 
+  dplyr::select(country,quarantine,schools,publicplace,gatheringlimit,gathering,nonessential,curfew,cessation,golf_clubs,face_masks,cessation2,hospibed,smokers,sexratio,density,firstcase,totalcases,deaths) %>% 
   rename(totaldeaths=deaths)
 
 #merge the datasets
@@ -187,7 +187,7 @@ complete_data=left_join(trend_data1, intervention_data, by = "country")
 ```{r,echo=FALSE, warning=FALSE,message=FALSE,include=FALSE}
 #clean all date variables
 
-dates_1= c("quarantine","schools","publicplace","gathering","nonessential","firstcase","curfew","cessation","golf_clubs","face_masks")
+dates_1= c("quarantine","schools","publicplace","gathering","nonessential","firstcase","curfew","cessation","golf_clubs","face_masks","cessation2")
 
 #add missing data for kenya
 
@@ -216,7 +216,8 @@ complete_data <- complete_data %>%
     cessation_intv=cessation-firstcase,
     golf_clubs_interv=golf_clubs-firstcase,
     face_masks_interv=face_masks-firstcase,
-    day_since_first_report=dateRep-firstcase)
+    day_since_first_report=dateRep-firstcase,
+    cessation_intv2=cessation-firstcase)
   
   #   complete_data <- complete_data %>% 
   # filter(day_since_first_report>0)
@@ -590,7 +591,7 @@ col1= c("#FAD089","#FF9C5B","#F5634A","#ED303C","#3B8183","#FAD089","#FF9C5B","#
 col1= c("purple","forestgreen","red")
 to_plot=complete_data %>% 
   dplyr::select(country,day_since_first_report,cumulative_cases,deaths,recovered,
-                quarantine_interv,schools_interv,publicplace_interv,gathering_interv,nonessential_interv,curfew_interv,cessation_intv,golf_clubs_interv,face_masks_interv)
+                quarantine_interv,schools_interv,publicplace_interv,gathering_interv,nonessential_interv,curfew_interv,cessation_intv,golf_clubs_interv,face_masks_interv,cessation_intv2)
  # filter(country=="Kenya"|country=="Italy") %>% 
   to_plot<-to_plot %>% 
 gather(val,responses,6:ncol(to_plot))  
@@ -606,15 +607,16 @@ gather(val,responses,6:ncol(to_plot))
           val=gsub("curfew_interv","Curfew",val),
           val=gsub("cessation_intv","Movement cessation in affected counties",val),
           val=gsub("golf_clubs_interv","Closure of all golf clubs",val),
-          val=gsub("face_masks_interv","Mandatory wearing of masks in public places",val)) %>% 
+          val=gsub("face_masks_interv","Mandatory wearing of masks in public places",val),
+          val=gsub("Movement cessation in affected counties2","Movement cessation in Oldtown and Estleigh counties",val)) %>% 
    mutate(intervention=ifelse(!is.na(val),paste(val,sep=""),NA))
  
  
 ### add cumulative cases of deaths, active and recovered
 kenya_plot<- to_plot %>% 
   filter(country=="Kenya") %>% 
-mutate(intervention=plyr::mapvalues(intervention,c("School Closure","Public place restriction","Gathering restriction","Quarantine","Curfew","Movement cessation in affected counties","Closure of all golf clubs","Mandatory wearing of masks in public places"),c(1,2,3,4,5,6,7,8))) %>% 
- mutate(intervention=factor(intervention,levels = c(1,2,3,4,5,6,7,8),labels = c("School Closure","Public place restriction","Gathering restriction","Quarantine","Curfew","Movement cessation in\naffected counties","Closure of all golf clubs","Mandatory wearing of masks in public places")))
+mutate(intervention=plyr::mapvalues(intervention,c("School Closure","Public place restriction","Gathering restriction","Quarantine","Curfew","Movement cessation in affected counties","Closure of all golf clubs","Mandatory wearing of masks in public places","Movement cessation in Oldtown and Estleigh counties"),c(1,2,3,4,5,6,7,8,9))) %>% 
+ mutate(intervention=factor(intervention,levels = c(1,2,3,4,5,6,7,8,9),labels = c("School Closure","Public place restriction","Gathering restriction","Quarantine","Curfew","Movement cessation in\naffected counties","Closure of all golf clubs","Mandatory wearing of masks in public places","Movement cessation in \nOldtown and Estleigh counties")))
 
 
 kenya_plot<- kenya_plot %>% 
@@ -637,7 +639,7 @@ ggplot(kenya_plot,aes(x = day_since_first_report, y = cases))+
         panel.grid = element_blank(), panel.border = element_blank()) +
   geom_vline(aes(xintercept=responses,colour =intervention), 
              linetype="dashed", size=1.5, show.legend = T,na.rm = F)+
-  scale_x_continuous(breaks  = seq(0,60,2))+scale_y_continuous(breaks  = seq(0,max(kenya_plot$cases)+5,30))+
+  scale_x_continuous(breaks  = seq(0,60,3))+scale_y_continuous(breaks  = seq(0,max(kenya_plot$cases)+5,30))+
   theme(legend.position="right", legend.title = element_blank())
 
 
@@ -1024,7 +1026,7 @@ county.shp@data <- county.shp@data %>%
 
 #### interactive map
 
-bin <- c(1,5,10,20,50,100,300)
+bin <- c(1,5,10,20,50,100,200,400)
 
 pal <- colorBin("Reds", domain = county.shp$cases, bins = bin,na.color="grey")
 
