@@ -639,7 +639,7 @@ ggplot(kenya_plot,aes(x = day_since_first_report, y = cases))+
         panel.grid = element_blank(), panel.border = element_blank()) +
   geom_vline(aes(xintercept=responses,colour =intervention), 
              linetype="dashed", size=1.5, show.legend = T,na.rm = F)+
-  scale_x_continuous(breaks  = seq(0,60,3))+scale_y_continuous(breaks  = seq(0,max(kenya_plot$cases)+5,30))+
+  scale_x_continuous(breaks  = seq(0,100,5))+scale_y_continuous(breaks  = seq(0,max(kenya_plot$cases)+5,300))+
   theme(legend.position="right", legend.title = element_blank())
 
 
@@ -654,7 +654,7 @@ x<- complete_data %>%
 
 ggplot(data=x, aes(x=day_since_first_report,y=cumulative_cases,
     group=1))+theme_classic()+geom_line(colour="red",size=1.5)+geom_point(colour="red",size=1.5)+
-    scale_x_continuous(breaks  = seq(0,60,5))+
+    scale_x_continuous(breaks  = seq(0,100,5))+
   geom_label(aes(label=paste(round(cumulative_cases,0))),nudge_x =0.1,nudge_y=0.1,label.padding = unit(0.15, "lines"))+
     labs(x=paste("Days since first case was reported"),y="", title = "Cumulative Covid-19 Cases\n(Kenya)")+ 
      theme(legend.position = "right",
@@ -678,7 +678,7 @@ summ<- complete_data %>%
 
 ggplot(data=summ, aes(x=day_since_first_report,y=cases,
     group=1))+theme_classic()+geom_line(colour="red",size=1.5)+geom_point(colour="red",size=1.5)+
-    scale_x_continuous(breaks  = seq(0,60,2))+
+    scale_x_continuous(breaks  = seq(0,100,5))+
   geom_label(aes(label=paste(round(cases,0))),nudge_x =0.1,nudge_y=0.1,label.padding = unit(0.15, "lines"))+
     labs(x=paste("Days since first case was reported"),y="", title = "New Covid-19 Cases Per Day\n(Kenya)")+ 
      theme(legend.position = "right",
@@ -694,6 +694,56 @@ Row{.tabset}
 -----------------------------------------------------------------------
 
 ### **Cumulative cases**
+
+```{r,fig.width=10,rows.print=5,results='asis'}
+
+df_africa <- global_data %>%
+  # dplyr::filter(date == max(date)) %>%
+  dplyr::filter(Country_Region == "Kenya" |Country_Region == "South Sudan" |
+    Country_Region == "Tanzania"| Country_Region == "Ethiopia" |Country_Region == "Eritrea"|
+    Country_Region == "Uganda" |Country_Region == "Rwanda" | Country_Region == "Djibouti"|
+    Country_Region == "Somalia"|Country_Region == "Burundi") %>% 
+  select(Country_Region,Confirmed) 
+  #spread(Country_Region,cumulative_cases) 
+  
+  
+
+ggplot(data=df_africa, aes_string(x=paste0("reorder(Country_Region",", Confirmed)"),y="Confirmed")) + coord_flip()+
+  geom_bar(stat = "identity",position = position_dodge(),fill = "#CC0000") + 
+  my_theme+geom_text(aes(label=paste(round(Confirmed,0),"",sep="")),
+   hjust = 0,vjust=-0, size = 4.5,position = position_dodge(1),fontface = "bold")+
+    labs(x = "", y = "",title = "Confirmed Covid-19 cases\n(Eastern Africa)")+theme_classic()+my_theme+
+  theme(axis.text.x=element_blank(),axis.ticks=element_blank(),
+        legend.position ="none")+scale_fill_brewer(palette = "Reds")
+
+
+```
+
+### **Active cases trend**
+
+```{r,fig.width=10,rows.print=5,results='asis'}
+
+df_africa <- global_data %>%
+  # dplyr::filter(date == max(date)) %>%
+  dplyr::filter(Country_Region == "Kenya" |Country_Region == "South Sudan" |
+    Country_Region == "Tanzania"| Country_Region == "Ethiopia" |Country_Region == "Eritrea"|
+    Country_Region == "Uganda" |Country_Region == "Rwanda" | Country_Region == "Djibouti"|
+    Country_Region == "Somalia"|Country_Region == "Burundi") %>% 
+  select(Country_Region,Active) 
+  #spread(Country_Region,cumulative_cases) 
+  
+  
+ggplot(data=df_africa, aes_string(x=paste0("reorder(Country_Region",", Active)"),y="Active")) + coord_flip()+
+  geom_bar(stat = "identity",position = position_dodge(),fill = "#CC0000") + 
+  my_theme+geom_text(aes(label=paste(round(Active,0),"",sep="")),
+   hjust = 0,vjust=-0, size = 4.5,position = position_dodge(1),fontface = "bold")+
+    labs(x = "", y = "",title = "Active Covid-19 cases\n(Eastern Africa)")+theme_classic()+my_theme+
+  theme(axis.text.x=element_blank(),axis.ticks=element_blank(),
+        legend.position ="none")+scale_fill_brewer(palette = "Reds")
+
+```
+
+### **Linear trend**
 
 ```{r,fig.width=10,rows.print=5,results='asis'}
 
@@ -715,65 +765,33 @@ plot1<- ggplot(data=df_africa, aes(x=day_since_first_report,y=cumulative_cases,
     labs(x=paste("Days since first case was reported"),y="", title = "Cumulative Covid-19 cases\n(Eastern Africa)")+
      theme(legend.position = "right",
            legend.title = element_blank())+ scale_colour_discrete(na.translate = F)+my_theme+
- scale_x_continuous(breaks =seq(0,max(as.numeric(df_africa$day_since_first_report)+1,2)))
+ scale_x_continuous(breaks =seq(0,100,5))
 
 plotly::ggplotly(plot1,tooltip = c("y", "x","colour"))
 
 ```
 
-### **Death rate**(Proportion of people who have died)
+### **Logarithmic trend**
 
 ```{r,fig.width=10,rows.print=5,results='asis'}
-
 df_africa <- complete_data %>%
   # dplyr::filter(date == max(date)) %>%
   dplyr::filter(country == "Kenya" |country == "South Sudan" |
     country == "Tanzania"| country == "Ethiopia" |country == "Eritrea"|
     country == "Uganda" |country == "Rwanda" | country == "Djibouti"|
-    country == "Burundi") %>% 
-  select(country,deaths,cumulative_cases,day_since_first_report,firstcase) %>% 
+    country == "Somalia") %>% 
+  select(country,cumulative_cases,day_since_first_report,firstcase) %>% 
   mutate(today_kenya=Sys.Date()-date("2020-03-12")-1) %>% 
   filter(day_since_first_report<=today_kenya) %>% 
-    filter(day_since_first_report>0)%>% 
-  mutate(death_rate=round(deaths/cumulative_cases*100,1))  
+    filter(day_since_first_report>0) 
   #spread(country,cumulative_cases) 
   
-  
-plot1<- ggplot(data=df_africa, aes(x=day_since_first_report,y=death_rate,
+plot1 <- ggplot(data=df_africa, aes(x=day_since_first_report,y=cumulative_cases,
     group=country,color=country))+theme_classic()+geom_line(size=1.)+geom_point(size=.8)+
-    labs(x=paste("Days since first case was reported"),y="", title = "Death Rate for COVID 19\n(Eastern Africa)")+
+    labs(x=paste("Days since first case was reported"),y="", title = "Trajectory growth in Cumulative cases\n(Eastern Africa)")+scale_y_continuous(trans='log10')+
      theme(legend.position = "right",
            legend.title = element_blank())+ scale_colour_discrete(na.translate = F)+my_theme+
- scale_x_continuous(breaks =seq(0,max(as.numeric(df_africa$day_since_first_report)+1,2)))
-
-plotly::ggplotly(plot1,tooltip = c("y", "x","colour"))
-
-```
-
-### **Recovery rate** (Proportion of people who have recovered)
-
-```{r,fig.width=10,rows.print=5,results='asis'}
-
-df_africa <- complete_data %>%
-  # dplyr::filter(date == max(date)) %>%
-  dplyr::filter(country == "Kenya" |country == "South Sudan" |
-    country == "Tanzania"| country == "Ethiopia" |country == "Eritrea"|
-    country == "Uganda" |country == "Rwanda" | country == "Djibouti"|
-    country == "Burundi") %>% 
-  select(country,recovered,cumulative_cases,day_since_first_report,firstcase) %>% 
-  mutate(today_kenya=Sys.Date()-date("2020-03-12")-1) %>% 
-  filter(day_since_first_report<=today_kenya) %>% 
-    filter(day_since_first_report>0)%>% 
-  mutate(recovery_rate=round(recovered/cumulative_cases*100,1))  
-  #spread(country,cumulative_cases) 
-  
-  
-plot1<- ggplot(data=df_africa, aes(x=day_since_first_report,y=recovery_rate,
-    group=country,color=country))+theme_classic()+geom_line(size=1.)+geom_point(size=.8)+
-    labs(x=paste("Days since first case was reported"),y="", title = "Recovery Rate for COVID 19 \n(Eastern Africa)")+
-     theme(legend.position = "right",
-           legend.title = element_blank())+ scale_colour_discrete(na.translate = F)+my_theme+
- scale_x_continuous(breaks =seq(0,max(as.numeric(df_africa$day_since_first_report)+1,4)))
+ scale_x_continuous(breaks =seq(0,100,5))
 
 plotly::ggplotly(plot1,tooltip = c("y", "x","colour"))
 
@@ -787,178 +805,104 @@ Row{.tabset}
 
 ### **Cumulative cases**
 
+```{r,fig.width=10,rows.print=5,results='asis'}
+
+df_africa <- global_data %>%
+  # dplyr::filter(date == max(date)) %>%
+  dplyr::filter(Country_Region %in% africa) %>% 
+  select(Country_Region,Confirmed) %>% 
+  arrange(-Confirmed)
+  #spread(Country_Region,cumulative_cases) 
+  
+ df_africa<- df_africa[c(1:10),] 
+
+ top <- as.character(df_africa$Country_Region[1:10]) 
+
+ggplot(data=df_africa, aes_string(x=paste0("reorder(Country_Region",", Confirmed)"),y="Confirmed")) + coord_flip()+
+  geom_bar(stat = "identity",position = position_dodge(),fill = "#CC0000") + 
+  my_theme+geom_text(aes(label=paste(round(Confirmed,0),"",sep="")),
+   hjust = 0,vjust=-0, size = 4,position = position_dodge(1),fontface = "bold")+
+    labs(x = "", y = "",title = "Top 10 countries with Confirmed Covid-19 cases\n(Africa)")+theme_classic()+my_theme+
+  theme(axis.text.x=element_blank(),axis.ticks=element_blank(),
+        legend.position ="none")+scale_fill_brewer(palette = "Reds")
+
+```
+
+### **Active cases**
+
+```{r,fig.width=10,rows.print=5,results='asis'}
+
+df_africa <- global_data %>%
+  # dplyr::filter(date == max(date)) %>%
+  dplyr::filter(Country_Region %in% africa) %>% 
+  select(Country_Region,Active) %>% 
+  arrange(-Active)
+  #spread(Country_Region,cumulative_cases) 
+  
+ df_africa<- df_africa[c(1:10),] 
+
+ggplot(data=df_africa, aes_string(x=paste0("reorder(Country_Region",", Active)"),y="Active")) + coord_flip()+
+  geom_bar(stat = "identity",position = position_dodge(),fill = "#CC0000") + 
+  my_theme+geom_text(aes(label=paste(round(Active,0),"",sep="")),
+   hjust = 0,vjust=-0, size = 3.5,position = position_dodge(1),fontface = "bold")+
+    labs(x = "", y = "",title = "Top 10 countries with Active Covid-19 cases\n(Africa)")+theme_classic()+my_theme+
+  theme(axis.text.x=element_blank(),axis.ticks=element_blank(),
+        legend.position ="none")+scale_fill_brewer(palette = "Reds")
+
+```
+
+### **Linear trend**
+
 ```{r,fig.width=11,rows.print=5,results='asis'}
 df_africa <- complete_data %>%
-  # dplyr::filter(date == max(date)) %>%
-  dplyr::filter(country == "Kenya" |country == "South Africa" |
-    country == "Egypt"|
-    country == "Algeria" |country == "Morocco" |
-    country == "Cameroon") %>% 
+ dplyr::filter(country %in% top|country == "Kenya" ) %>% 
   select(country,cumulative_cases,day_since_first_report,firstcase) %>% 
   mutate(today_kenya=Sys.Date()-date("2020-03-12")-1) %>% 
   filter(day_since_first_report<=today_kenya) %>% 
     filter(day_since_first_report>0) 
   #spread(country,cumulative_cases) 
   
+# df_africa <- global_data %>%
+#   # dplyr::filter(date == max(date)) %>%
+#   dplyr::filter(Country_Region %in% africa) %>% 
+#   select(Country_Region,Confirmed) %>% 
+#   arrange(-Confirmed)
+#   #spread(Country_Region,cumulative_cases) 
+#   
+#  df_africa<- df_africa[c(1:10),] 
   
 plot1<- ggplot(data=df_africa, aes(x=day_since_first_report,y=cumulative_cases,
     group=country,color=country))+theme_classic()+geom_line(size=1.)+geom_point(size=.8)+
-    labs(x=paste("Days since first case was reported"),y="", title = "Kenya and the Top 5 in Africa")+
+    labs(x=paste("Days since first case was reported"),y="", title = "Kenya and Top 10 Countries with Confirmed COVID-19 in Africa")+
      theme(legend.position = "right",
            legend.title = element_blank())+ scale_colour_discrete(na.translate = F)+my_theme+
- scale_x_continuous(breaks =seq(0,max(as.numeric(df_africa$day_since_first_report)+1,2)))
+ scale_x_continuous(breaks =seq(0,100,5))
 
 plotly::ggplotly(plot1,tooltip = c("y", "x","colour"))
 
 ```
 
-### **Death rate**(Proportion of people who have died)
+### **Logarithmic trend**
 
 ```{r,fig.width=11,rows.print=5,results='asis'}
 df_africa <- complete_data %>%
-  # dplyr::filter(date == max(date)) %>%
-  dplyr::filter(country == "Kenya" |country == "South Africa" |
-    country == "Egypt"|
-    country == "Algeria" |country == "Morocco" |
-    country == "Cameroon") %>% 
-  select(country,deaths,cumulative_cases,day_since_first_report,firstcase) %>% 
-  mutate(today_kenya=Sys.Date()-date("2020-03-12")-1) %>% 
-  filter(day_since_first_report<=today_kenya) %>% 
-    filter(day_since_first_report>0)%>% 
-  mutate(death_rate=round(deaths/cumulative_cases*100,1)) 
-  #spread(country,cumulative_cases)
-  #spread(country,cumulative_cases) 
-  
-  
-plot1<- ggplot(data=df_africa, aes(x=day_since_first_report,y=death_rate,
-    group=country,color=country))+theme_classic()+geom_line(size=1.)+geom_point(size=.8)+
-    labs(x=paste("Days since first case was reported"),y="", title = "Death rate for Kenya vs Top 5 countries in Africa")+
-     theme(legend.position = "right",
-           legend.title = element_blank())+ scale_colour_discrete(na.translate = F)+my_theme+
- scale_x_continuous(breaks =seq(0,max(as.numeric(df_africa$day_since_first_report)+1,2)))
-
-plotly::ggplotly(plot1,tooltip = c("y", "x","colour"))
-
-```
-
-### **Recovery rate** (Proportion of people who have recovered)
-
-```{r,fig.width=11,rows.print=5,results='asis'}
-df_africa <- complete_data %>%
-  # dplyr::filter(date == max(date)) %>%
-  dplyr::filter(country == "Kenya" |country == "South Africa" |
-    country == "Egypt"|
-    country == "Algeria" |country == "Morocco" |
-    country == "Cameroon") %>% 
-  select(country,recovered,cumulative_cases,day_since_first_report,firstcase) %>% 
-  mutate(today_kenya=Sys.Date()-date("2020-03-12")-1) %>% 
-  filter(day_since_first_report<=today_kenya) %>% 
-    filter(day_since_first_report>0)%>% 
-  mutate(recovery_rate=round(recovered/cumulative_cases*100,1)) 
-  #spread(country,cumulative_cases) 
-  #spread(country,cumulative_cases) 
-  
-  
-plot1<- ggplot(data=df_africa, aes(x=day_since_first_report,y=recovery_rate,
-    group=country,color=country))+theme_classic()+geom_line(size=1.)+geom_point(size=.8)+
-    labs(x=paste("Days since first case was reported"),y="", title = "Recovery rate for Kenya vs Top 5 countries in Africa")+
-     theme(legend.position = "right",
-           legend.title = element_blank())+ scale_colour_discrete(na.translate = F)+my_theme+
- scale_x_continuous(breaks =seq(0,max(as.numeric(df_africa$day_since_first_report)+1,2)))
-
-plotly::ggplotly(plot1,tooltip = c("y", "x","colour"))
-
-```
-
-Global {data-navmenu="Comparison" data-icon="fa-globe-africa"}
-=======================================================================
-
-Row{.tabset}
------------------------------------------------------------------------
-
-### **Cumulative cases**
-
-```{r,fig.width=11,rows.print=5,results='asis'}
-df_EU <- complete_data %>%
-  # dplyr::filter(date == max(date)) %>%
-  dplyr::filter(country == "Kenya" |country == "US" |
-    country == "Korea, South"|
-    country == "Italy" |country == "Germany" |
-    country == "Spain") %>% 
+ dplyr::filter(country %in% top|country == "Kenya" ) %>% 
   select(country,cumulative_cases,day_since_first_report,firstcase) %>% 
   mutate(today_kenya=Sys.Date()-date("2020-03-12")-1) %>% 
   filter(day_since_first_report<=today_kenya) %>% 
-  filter(day_since_first_report>0)
-  #spread(country,cumulative_cases)
+    filter(day_since_first_report>0) 
+  #spread(country,cumulative_cases) 
 
-
-plot0<-ggplot(data=df_EU, aes(x=day_since_first_report,y=cumulative_cases,
+plot1<- ggplot(data=df_africa, aes(x=day_since_first_report,y=cumulative_cases,
     group=country,color=country))+theme_classic()+geom_line(size=1.)+geom_point(size=.8)+
-    labs(x=paste("Days since first case was reported"),y="", title = "Kenya and the leading nations\n(Globally)")+
+    labs(x=paste("Days since first case was reported"),y="", title = "Trajectory growth in cumulative cases in Kenya \nwith comparison to top 10 countries in Africa")+ scale_y_continuous(trans='log10')+
      theme(legend.position = "right",
            legend.title = element_blank())+ scale_colour_discrete(na.translate = F)+my_theme+
- scale_x_continuous(breaks =seq(0,max(as.numeric(df_EU$day_since_first_report)+1,2)))
+ scale_x_continuous(breaks =seq(0,100,5))
 
-plotly::ggplotly(plot0,tooltip = c("y", "x","colour"))
-
-```
-
-### **Death rate**(Proportion of people who have died)
-
-```{r,fig.width=11,rows.print=5,results='asis'}
-df_EU <- complete_data %>%
-  # dplyr::filter(date == max(date)) %>%
-  dplyr::filter(country == "Kenya" |country == "US" |
-    country == "Korea, South"|
-    country == "Italy" |country == "Germany" |
-    country == "Spain") %>% 
-  select(country,deaths,cumulative_cases,day_since_first_report,firstcase) %>% 
-  mutate(today_kenya=Sys.Date()-date("2020-03-12")-1) %>% 
-  filter(day_since_first_report<=today_kenya) %>% 
-  filter(day_since_first_report>0) %>% 
-  mutate(death_rate=round(deaths/cumulative_cases*100,1))
-  #spread(country,cumulative_cases)
-
-
-plot0<-ggplot(data=df_EU, aes(x=day_since_first_report,y=death_rate,
-    group=country,color=country))+theme_classic()+geom_line(size=1.)+geom_point(size=.8)+
-    labs(x=paste("Days since first case was reported"),y="", title = "Death rate for Kenya vs leading nations\n(Globally)")+
-     theme(legend.position = "right",
-           legend.title = element_blank())+ scale_colour_discrete(na.translate = F)+my_theme+
- scale_x_continuous(breaks =seq(0,max(as.numeric(df_EU$day_since_first_report)+1,2)))
-
-plotly::ggplotly(plot0,tooltip = c("y", "x","colour"))
+plotly::ggplotly(plot1,tooltip = c("y", "x","colour"))
 
 ```
-
-### **Recovery rate**(Proportion of people who have recovered)
-
-```{r,fig.width=11,rows.print=5,results='asis'}
-df_EU <- complete_data %>%
-  # dplyr::filter(date == max(date)) %>%
-  dplyr::filter(country == "Kenya" |country == "US" |
-    country == "Korea, South"|
-    country == "Italy" |country == "Germany" |
-    country == "Spain") %>% 
-  select(country,recovered,cumulative_cases,day_since_first_report,firstcase) %>% 
-  mutate(today_kenya=Sys.Date()-date("2020-03-12")-1) %>% 
-  filter(day_since_first_report<=today_kenya) %>% 
-  filter(day_since_first_report>0)%>% 
-  mutate(recovery_rate=round(recovered/cumulative_cases*100,1)) 
-  #spread(country,cumulative_cases)
-
-
-plot0<-ggplot(data=df_EU, aes(x=day_since_first_report,y=recovery_rate,
-    group=country,color=country))+theme_classic()+geom_line(size=1.)+geom_point(size=.8)+
-    labs(x=paste("Days since first case was reported"),y="", title = "Recovery rate for Kenya vs leading nations\n(Globally)")+
-     theme(legend.position = "right",
-           legend.title = element_blank())+ scale_colour_discrete(na.translate = F)+my_theme+
- scale_x_continuous(breaks =seq(0,max(as.numeric(df_EU$day_since_first_report)+1,2)))
-
-plotly::ggplotly(plot0,tooltip = c("y", "x","colour"))
-
-```
-
 
 Map {data-icon="fa-globe-africa"}
 =======================================================================
@@ -1026,7 +970,7 @@ county.shp@data <- county.shp@data %>%
 
 #### interactive map
 
-bin <- c(1,5,10,20,50,100,200,400)
+bin <- c(1,5,10,20,50,100,200,500,800,1000,2000)
 
 pal <- colorBin("Reds", domain = county.shp$cases, bins = bin,na.color="grey")
 
