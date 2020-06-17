@@ -230,7 +230,8 @@ complete_data <- complete_data %>%
 today<- Sys.Date()-1
 yesterday = format(today, format="%m-%d-%Y")
 
-baseURL = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports"
+baseURL = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/"
+
 
 fileName<- paste(yesterday,"csv",sep=".")
 global_data = read.csv(file.path(baseURL, fileName))
