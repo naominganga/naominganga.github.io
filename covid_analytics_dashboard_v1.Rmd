@@ -955,52 +955,72 @@ addCircleMarkers(
 ```
 
 
+
 ### **Kenya map of cases** 
 
 ```{r,comment=NA,warning=F,error=T,message=F,cache=FALSE}
 
-cases<- read.csv("C:/Users/Admin/Documents/naominganga.github.io/map/covid_cases.csv",stringsAsFactors = F) %>% 
-  rename("NAME_1"="county")
-
-county.shp<- rgdal::readOGR("C:/Users/Admin/Documents/naominganga.github.io/map","KRCS_covid_survey_2020",verbose = FALSE)
-
-county.shp<-sp::merge(county.shp,cases, by="NAME_1",duplicateGeoms = T) 
-
-county.shp@data <- county.shp@data %>%
-  mutate(response=if_else(is.na(cases),"No Response","Response"))
-
-#### interactive map
-
-bin <- c(1,5,10,20,50,100,200,500,800,1000,2000)
-
-pal <- colorBin("Reds", domain = county.shp$cases, bins = bin,na.color="grey")
-
-(map <- leaflet() %>%
-   setView(40.25880, -0.5, zoom = 6.3) %>% 
-  addTiles(group = "OSM") %>%
-    addProviderTiles(providers$Stamen.Toner) %>% 
-  # Marker data are from the sites data frame. We need the ~ symbols
-  # to indicate the columns of the data frame.
-  # addAwesomeMarkers(~lon_dd, ~lat_dd, label = ~locality, group = "Sites", icon=icons) %>%
-    addPolygons(data=county.shp, 
-              group="NAME_1", 
-              stroke = FALSE,
-              fillColor = ~pal(cases),
-              fillOpacity = 0.9, 
-              weight = 0.2, 
-              smoothFactor = 0.2,
-               popup = leafpop::popupTable(county.shp@data,
-          zcol = c("NAME_1", "cases"), feature.id = FALSE,
-          row.numbers = FALSE),
-  highlightOptions = highlightOptions(color="black",stroke = 4, weight = 5,bringToFront = TRUE),
-                  labelOptions = labelOptions(direction = "auto")) %>%
-    addLegend(pal = pal,
-            values = county.shp$response, 
-            position = "bottomright", 
-            title = "Covid19 cases"))
+# cases<- read.csv("C:/Users/Admin/Documents/naominganga.github.io/map/covid_cases.csv",stringsAsFactors = F) %>% 
+#   rename("NAME_1"="county")
+# 
+# county.shp<- rgdal::readOGR("C:/Users/Admin/Documents/naominganga.github.io/map","KRCS_covid_survey_2020",verbose = FALSE)
+# 
+# county.shp<-sp::merge(county.shp,cases, by="NAME_1",duplicateGeoms = T) 
+# 
+# county.shp@data <- county.shp@data %>%
+#   mutate(response=if_else(is.na(cases),"No Response","Response"))
+# 
+# #### interactive map
+# 
+# bin <- c(1,5,10,20,50,100,200,500,800,1000,2000)
+# 
+# pal <- colorBin("Reds", domain = county.shp$cases, bins = bin,na.color="grey")
+# 
+# (map <- leaflet() %>%
+#    setView(40.25880, -0.5, zoom = 6.3) %>% 
+#   addTiles(group = "OSM") %>%
+#     addProviderTiles(providers$Stamen.Toner) %>% 
+#   # Marker data are from the sites data frame. We need the ~ symbols
+#   # to indicate the columns of the data frame.
+#   # addAwesomeMarkers(~lon_dd, ~lat_dd, label = ~locality, group = "Sites", icon=icons) %>%
+#     addPolygons(data=county.shp, 
+#               group="NAME_1", 
+#               stroke = FALSE,
+#               fillColor = ~pal(cases),
+#               fillOpacity = 0.9, 
+#               weight = 0.2, 
+#               smoothFactor = 0.2,
+#                popup = leafpop::popupTable(county.shp@data,
+#           zcol = c("NAME_1", "cases"), feature.id = FALSE,
+#           row.numbers = FALSE),
+#   highlightOptions = highlightOptions(color="black",stroke = 4, weight = 5,bringToFront = TRUE),
+#                   labelOptions = labelOptions(direction = "auto")) %>%
+#     addLegend(pal = pal,
+#             values = county.shp$response, 
+#             position = "bottomright", 
+#             title = "Covid19 cases"))
 
 ```
 
+
+```{r, echo=FALSE, fig.cap="A caption", out.width = '100%'}
+knitr::include_graphics("C:/Users/Admin/Documents/naominganga.github.io/map/infographics/June_29th_2020.jpeg")
+```
+
+### **Nairobi county cases** 
+
+```{r, echo=FALSE, fig.cap="A caption", out.width = '100%'}
+knitr::include_graphics("C:/Users/Admin/Documents/naominganga.github.io/map/infographics/spread_pf_covid-19_Nairobi_29th_june.jpg")
+
+```
+
+
+### **Mombasa county cases** 
+
+```{r, echo=FALSE, fig.cap="A caption", out.width = '100%'}
+knitr::include_graphics("C:/Users/Admin/Documents/naominganga.github.io/map/infographics/spread_pf_covid-19_Mombasa_29th_june.jpg")
+
+```
 
 About
 =======================================================================
