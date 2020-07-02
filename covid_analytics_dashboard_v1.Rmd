@@ -1004,7 +1004,7 @@ addCircleMarkers(
 
 
 ```{r, echo=FALSE, fig.cap="A caption", out.width = '100%'}
-knitr::include_graphics("C:/Users/Admin/Documents/naominganga.github.io/map/infographics/June_29th_2020.jpeg")
+knitr::include_graphics("C:/Users/Admin/Documents/naominganga.github.io/map/infographics/July_1st_2020.jpeg")
 ```
 
 ### **Nairobi county cases** 
