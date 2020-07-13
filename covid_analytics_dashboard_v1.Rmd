@@ -73,18 +73,18 @@ minutesSinceLastUpdate = function(fileName) {
 }
 
 loadData = function(fileName, columnName) {
-  if(!file.exists(fileName) || 
+  if(!file.exists(fileName) ||
      minutesSinceLastUpdate(fileName) > 300) {
-    data = read.csv(file.path(baseURL, fileName), 
+    data = read.csv(file.path(baseURL, fileName),
       check.names=FALSE, stringsAsFactors=FALSE) %>%
-      select(-Lat, -Long) %>% 
+      select(-Lat, -Long) %>%
       gather(date,columnName,-(1:2))%>%
       mutate(
         date=as.Date(date, format="%m/%d/%y"),
         `Province/State`=
           if_else(`Province/State` == "", "<all>", `Province/State`)
       )
-    save(data, file=fileName)  
+    save(data, file=fileName)
   } else {
     load(file=fileName)
   }
@@ -230,11 +230,14 @@ complete_data <- complete_data %>%
 today<- Sys.Date()-1
 yesterday = format(today, format="%m-%d-%Y")
 
-baseURL = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/"
+
+baseURL = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports"
 
 
 fileName<- paste(yesterday,"csv",sep=".")
 global_data = read.csv(file.path(baseURL, fileName))
+
+
 
 ```
 
@@ -628,8 +631,26 @@ kenya_plot<- kenya_plot %>%
   mutate(type=plyr::mapvalues(type,c("cumulative_cases","recovered","deaths"),c(1,2,3))) %>% 
  mutate(type=factor(type,levels = c(1,2,3),labels = c("Cumulative cases","Recovered","Deaths")))
 
+# cc=kenya_plot[kenya_plot$type=="Cumulative cases",]
+# 
+# plot2=ggplot(cc,aes(x = day_since_first_report, y = cases))+
+#   geom_point(col="red")+geom_line(col="red")+
+#   scale_fill_manual(values =col1)+
+#   labs(x=paste("Days since first case was reported"),y="", title = "Covid-19 Cumulative cases vs Policy Intervention Implemented\n(Kenya)") +
+#   theme_bw() +
+#   theme(plot.title = element_text(hjust = 0.5),
+#         text = element_text(size=15, family="Source Sans Pro Semibold"),
+#         panel.grid = element_blank(), panel.border = element_blank()) +
+#   geom_vline(aes(xintercept=responses,colour =intervention), 
+#              linetype="dashed", size=1.5, show.legend = T,na.rm = F)+
+#   scale_x_continuous(breaks  = seq(0,150,10))+scale_y_continuous(breaks  = seq(0,8000,1000))+
+#   theme(legend.position="right", legend.title = element_blank(),
+#         axis.line.x = element_line(colour="grey"))
+
+#ggsave(file="test.svg", plot=plot2, width=10, height=8)
+
  
-ggplot(kenya_plot,aes(x = day_since_first_report, y = cases))+
+plot1=ggplot(kenya_plot,aes(x = day_since_first_report, y = cases))+
   #geom_point()+geom_line()+
   geom_area(aes(fill = type),position = "identity") + 
   scale_fill_manual(values =col1)+
@@ -640,9 +661,11 @@ ggplot(kenya_plot,aes(x = day_since_first_report, y = cases))+
         panel.grid = element_blank(), panel.border = element_blank()) +
   geom_vline(aes(xintercept=responses,colour =intervention), 
              linetype="dashed", size=1.5, show.legend = T,na.rm = F)+
-  scale_x_continuous(breaks  = seq(0,150,10))+scale_y_continuous(breaks  = seq(0,max(kenya_plot$cases)+5,300))+
+  scale_x_continuous(breaks  = seq(0,150,10))+scale_y_continuous(breaks  = seq(0,8000,1000))+
   theme(legend.position="right", legend.title = element_blank())
 
+plot1
+ggsave(plot1,file="intervention_chart.png",scale=4)
 
 ```
 
@@ -715,7 +738,7 @@ ggplot(data=df_africa, aes_string(x=paste0("reorder(Country_Region",", Confirmed
    hjust = 0,vjust=-0, size = 4.5,position = position_dodge(1),fontface = "bold")+
     labs(x = "", y = "",title = "Confirmed Covid-19 cases\n(Eastern Africa)")+theme_classic()+my_theme+
   theme(axis.text.x=element_blank(),axis.ticks=element_blank(),
-        legend.position ="none")+scale_fill_brewer(palette = "Reds")
+        legend.position ="none")+scale_fill_brewer(palette = "Reds")+ylim(0,15000)
 
 
 ```
@@ -825,7 +848,7 @@ ggplot(data=df_africa, aes_string(x=paste0("reorder(Country_Region",", Confirmed
    hjust = 0,vjust=-0, size = 4,position = position_dodge(1),fontface = "bold")+
     labs(x = "", y = "",title = "Top 10 countries with Confirmed Covid-19 cases\n(Africa)")+theme_classic()+my_theme+
   theme(axis.text.x=element_blank(),axis.ticks=element_blank(),
-        legend.position ="none")+scale_fill_brewer(palette = "Reds")+ylim(c(0,250000))
+        legend.position ="none")+scale_fill_brewer(palette = "Reds")+ylim(c(0,500000))
 
 ```
 
@@ -1004,13 +1027,13 @@ addCircleMarkers(
 
 
 ```{r, echo=FALSE, fig.cap="A caption", out.width = '100%'}
-knitr::include_graphics("C:/Users/Admin/Documents/naominganga.github.io/map/infographics/July_1st_2020.jpeg")
+knitr::include_graphics("C:/Users/Admin/Documents/naominganga.github.io/map/infographics/covid19 cases as of 12th July 2020.jpeg")
 ```
 
 ### **Nairobi county cases** 
 
 ```{r, echo=FALSE, fig.cap="A caption", out.width = '100%'}
-knitr::include_graphics("C:/Users/Admin/Documents/naominganga.github.io/map/infographics/spread_of_covid_19_Nai_6th July.jpg")
+knitr::include_graphics("C:/Users/Admin/Documents/naominganga.github.io/map/infographics/spread_of_covid_19_Nai_12th_July.jpg")
 
 ```
 
@@ -1018,7 +1041,7 @@ knitr::include_graphics("C:/Users/Admin/Documents/naominganga.github.io/map/info
 ### **Mombasa county cases** 
 
 ```{r, echo=FALSE, fig.cap="A caption", out.width = '100%'}
-knitr::include_graphics("C:/Users/Admin/Documents/naominganga.github.io/map/infographics/spread_of_covid_19_mombasa_6th_July_V2.jpg")
+knitr::include_graphics("C:/Users/Admin/Documents/naominganga.github.io/map/infographics/spread_of_covid_19_mombasa_12th_July.jpg")
 
 ```
 
