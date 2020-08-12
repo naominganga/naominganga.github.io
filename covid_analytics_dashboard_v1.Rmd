@@ -738,7 +738,7 @@ ggplot(data=df_africa, aes_string(x=paste0("reorder(Country_Region",", Confirmed
    hjust = 0,vjust=-0, size = 4.5,position = position_dodge(1),fontface = "bold")+
     labs(x = "", y = "",title = "Confirmed Covid-19 cases\n(Eastern Africa)")+theme_classic()+my_theme+
   theme(axis.text.x=element_blank(),axis.ticks=element_blank(),
-        legend.position ="none")+scale_fill_brewer(palette = "Reds")+ylim(0,30000)
+        legend.position ="none")+scale_fill_brewer(palette = "Reds")+ylim(0,33000)
 
 
 ```
@@ -1027,13 +1027,13 @@ addCircleMarkers(
 
 
 ```{r, echo=FALSE, fig.cap="A caption", out.width = '100%'}
-knitr::include_graphics("C:/Users/Admin/Documents/naominganga.github.io/map/infographics/covid19 cases as of 27th July 2020.jpeg")
+knitr::include_graphics("C:/Users/Admin/Documents/naominganga.github.io/map/infographics/kenya_11th_aug_2020.jpg")
 ```
 
 ### **Nairobi county cases** 
 
 ```{r, echo=FALSE, fig.cap="A caption", out.width = '100%'}
-knitr::include_graphics("C:/Users/Admin/Documents/naominganga.github.io/map/infographics/spread_of_covid_19_cases_24th_July_nairobi.jpg")
+knitr::include_graphics("C:/Users/Admin/Documents/naominganga.github.io/map/infographics/Spread_of_covid_19Nairobi_11th_August_2020.jpg")
 
 ```
 
@@ -1041,7 +1041,7 @@ knitr::include_graphics("C:/Users/Admin/Documents/naominganga.github.io/map/info
 ### **Mombasa county cases** 
 
 ```{r, echo=FALSE, fig.cap="A caption", out.width = '100%'}
-knitr::include_graphics("C:/Users/Admin/Documents/naominganga.github.io/map/infographics/spread_of_covid_19_cases_24th_July_mombasa.jpg")
+knitr::include_graphics("C:/Users/Admin/Documents/naominganga.github.io/map/infographics/Spread_of_covid_19_Mombasa_11th_August_2020.jpg")
 
 ```
 
