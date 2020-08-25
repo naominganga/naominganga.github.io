@@ -491,7 +491,7 @@ global1<- global_data %>%
 
 summ <- global1 %>%
   group_by(key) %>%
-  summarise(freq=sum(val))%>%
+  summarise(freq=sum(val,na.rm=T))%>%
   ungroup()%>%
   mutate(pp=ifelse(key!="Confirmed",freq,NA),
     perc=ifelse(key!="Confirmed",round(pp/sum(pp,na.rm=T)*100,1),NA)) %>% 
@@ -738,7 +738,7 @@ ggplot(data=df_africa, aes_string(x=paste0("reorder(Country_Region",", Confirmed
    hjust = 0,vjust=-0, size = 4.5,position = position_dodge(1),fontface = "bold")+
     labs(x = "", y = "",title = "Confirmed Covid-19 cases\n(Eastern Africa)")+theme_classic()+my_theme+
   theme(axis.text.x=element_blank(),axis.ticks=element_blank(),
-        legend.position ="none")+scale_fill_brewer(palette = "Reds")+ylim(0,33000)
+        legend.position ="none")+scale_fill_brewer(palette = "Reds")+ylim(0,50000)
 
 
 ```
@@ -763,7 +763,7 @@ ggplot(data=df_africa, aes_string(x=paste0("reorder(Country_Region",", Active)")
    hjust = 0,vjust=-0, size = 4.5,position = position_dodge(1),fontface = "bold")+
     labs(x = "", y = "",title = "Active Covid-19 cases\n(Eastern Africa)")+theme_classic()+my_theme+
   theme(axis.text.x=element_blank(),axis.ticks=element_blank(),
-        legend.position ="none")+scale_fill_brewer(palette = "Reds")+ylim(0,20000)
+        legend.position ="none")+scale_fill_brewer(palette = "Reds")+ylim(0,30000)
 
 ```
 
@@ -848,7 +848,7 @@ ggplot(data=df_africa, aes_string(x=paste0("reorder(Country_Region",", Confirmed
    hjust = 0,vjust=-0, size = 4,position = position_dodge(1),fontface = "bold")+
     labs(x = "", y = "",title = "Top 10 countries with Confirmed Covid-19 cases\n(Africa)")+theme_classic()+my_theme+
   theme(axis.text.x=element_blank(),axis.ticks=element_blank(),
-        legend.position ="none")+scale_fill_brewer(palette = "Reds")+ylim(c(0,600000))
+        legend.position ="none")+scale_fill_brewer(palette = "Reds")+ylim(c(0,700000))
 
 ```
 
@@ -1027,7 +1027,7 @@ addCircleMarkers(
 
 
 ```{r, echo=FALSE, fig.cap="A caption", out.width = '100%'}
-knitr::include_graphics("C:/Users/Admin/Documents/naominganga.github.io/map/infographics/kenya_11th_aug_2020.jpg")
+knitr::include_graphics("C:/Users/Admin/Documents/naominganga.github.io/map/infographics/covid19 cases as of 23rd August 2020.jpeg")
 ```
 
 ### **Nairobi county cases** 
